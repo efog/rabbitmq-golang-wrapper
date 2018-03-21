@@ -20,7 +20,7 @@ type Subscriber struct {
 }
 
 // CommandHandler command handler definition
-type CommandHandler func(string) error
+type CommandHandler func(string) (int, error)
 
 // NewSubscriber creates a new RabbitMQ subscriber
 func NewSubscriber(username string, password string, host string, port string, exchange string, handler CommandHandler) *Subscriber {
