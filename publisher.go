@@ -89,8 +89,8 @@ func (publisher *Publisher) Publish(payload *Payload) error {
 		false, // mandatory
 		false, // immediate
 		amqp.Publishing{
-			ContentType: payload.contentType,
-			Body:        []byte(payload.content),
+			ContentType: payload.ContentType,
+			Body:        []byte(payload.Content),
 		})
 
 	if err != nil {

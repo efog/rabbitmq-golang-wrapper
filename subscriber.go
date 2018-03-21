@@ -115,7 +115,7 @@ func (publisher *Subscriber) Connect() error {
 		}
 	}()
 
-	log.Printf(" [*] Waiting for commands. To exit press CTRL+C")
+	log.Printf(" [*] Waiting for commands.")
 	<-forever
 	return nil
 }
