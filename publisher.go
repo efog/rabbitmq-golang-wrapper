@@ -32,17 +32,16 @@ func NewPublisher(username string, password string, host string, port string, ex
 // Connect connects publisher
 func (publisher *Publisher) Connect() error {
 	rmqConnectionString := fmt.Sprintf("amqp://%s:%s@%s:%s/", publisher.rmqUsername, publisher.rmqPassword, publisher.rmqHost, publisher.rmqPort)
-	log.Printf("connecting to RabbitMQ using %s", rmqConnectionString)
 	conn, err := amqp.Dial(rmqConnectionString)
 	if err != nil {
-		log.Fatalf("%s: %s", "Failed to connect to RabbitMQ", err)
+		log.Fatalf("[0] %s: %s", "Failed to connect to RabbitMQ", err)
 		return nil
 	}
 	publisher.connection = conn
 
 	ch, err := conn.Channel()
 	if err != nil {
-		log.Fatalf("%s: %s", "Failed to open a channel in RabbitMQ", err)
+		log.Fatalf("[0] %s: %s", "Failed to open a channel in RabbitMQ", err)
 		return nil
 	}
 	publisher.channel = ch
@@ -57,7 +56,7 @@ func (publisher *Publisher) Connect() error {
 		nil,                   // arguments
 	)
 	if err != nil {
-		log.Fatalf("%s: %s", "Failed to declare an exchange", err)
+		log.Fatalf("[0] %s: %s", "Failed to declare an exchange", err)
 		return err
 	}
 
@@ -68,7 +67,7 @@ func (publisher *Publisher) Connect() error {
 func (publisher *Publisher) Close() error {
 	err := publisher.connection.Close()
 	if err != nil {
-		log.Fatalf("%s: %s", "Failed to close connection", err)
+		log.Fatalf("[0] %s: %s", "Failed to close connection", err)
 		return err
 	}
 	return nil
@@ -94,7 +93,7 @@ func (publisher *Publisher) Publish(payload *Payload) error {
 		})
 
 	if err != nil {
-		log.Fatalf("%s: %s", "Failed to publish payload", err)
+		log.Fatalf("[0] %s: %s", "Failed to publish payload", err)
 		return err
 	}
 	return nil

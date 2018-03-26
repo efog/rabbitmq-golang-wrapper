@@ -24,7 +24,6 @@ type CommandHandler func(string) (int, error)
 
 // NewSubscriber creates a new RabbitMQ subscriber
 func NewSubscriber(username string, password string, host string, port string, exchange string, handler CommandHandler) *Subscriber {
-	log.Printf("creating RMQ subscriber")
 	return &Subscriber{
 		handler:     handler,
 		rmqExchange: exchange,
@@ -37,7 +36,6 @@ func NewSubscriber(username string, password string, host string, port string, e
 // Connect connects publisher
 func (publisher *Subscriber) Connect() error {
 	rmqConnectionString := fmt.Sprintf("amqp://%s:%s@%s:%s/", publisher.rmqUsername, publisher.rmqPassword, publisher.rmqHost, publisher.rmqPort)
-	log.Printf("connecting to RabbitMQ using %s", rmqConnectionString)
 	conn, err := amqp.Dial(rmqConnectionString)
 	if err != nil {
 		log.Fatalf("%s: %s", "Failed to connect to RabbitMQ", err)
@@ -48,7 +46,7 @@ func (publisher *Subscriber) Connect() error {
 
 	ch, err := conn.Channel()
 	if err != nil {
-		log.Fatalf("%s: %s", "Failed to open a channel in RabbitMQ", err)
+		log.Fatalf("[0] %s: %s", "Failed to open a channel in RabbitMQ", err)
 		return err
 	}
 	publisher.channel = ch
@@ -63,7 +61,7 @@ func (publisher *Subscriber) Connect() error {
 		nil,                   // arguments
 	)
 	if err != nil {
-		log.Fatalf("%s: %s", "Failed to declare an exchange", err)
+		log.Fatalf("[0] %s: %s", "Failed to declare an exchange", err)
 		return err
 	}
 
@@ -76,7 +74,7 @@ func (publisher *Subscriber) Connect() error {
 		nil,   // arguments
 	)
 	if err != nil {
-		log.Fatalf("%s: %s", "Failed to declare a queue", err)
+		log.Fatalf("[0] %s: %s", "Failed to declare a queue", err)
 		return err
 	}
 
@@ -87,7 +85,7 @@ func (publisher *Subscriber) Connect() error {
 		false,
 		nil)
 	if err != nil {
-		log.Fatalf("%s: %s", "Failed to bind a queue", err)
+		log.Fatalf("[0] %s: %s", "Failed to bind a queue", err)
 		return err
 	}
 
@@ -101,7 +99,7 @@ func (publisher *Subscriber) Connect() error {
 		nil,    // args
 	)
 	if err != nil {
-		log.Fatalf("%s: %s", "Failed to consume channel", err)
+		log.Fatalf("[0] %s: %s", "Failed to consume channel", err)
 		return err
 	}
 
@@ -115,7 +113,7 @@ func (publisher *Subscriber) Connect() error {
 		}
 	}()
 
-	log.Printf(" [*] Waiting for commands.")
+	log.Printf("[x] Waiting for commands.")
 	<-forever
 	return nil
 }
