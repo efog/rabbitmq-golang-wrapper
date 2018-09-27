@@ -9,28 +9,30 @@ import (
 
 // Subscriber receives publications from RabbitMQ
 type Subscriber struct {
-	handler     CommandHandler
-	rmqUsername string
-	rmqPassword string
-	rmqHost     string
-	rmqPort     string
-	rmqExchange string
-	connection  *amqp.Connection
-	channel     *amqp.Channel
+	handler         CommandHandler
+	rmqUsername     string
+	rmqPassword     string
+	rmqHost         string
+	rmqPort         string
+	rmqExchange     string
+	rmqExchangeType string
+	connection      *amqp.Connection
+	channel         *amqp.Channel
 }
 
 // CommandHandler command handler definition
 type CommandHandler func(string) (int, error)
 
 // NewSubscriber creates a new RabbitMQ subscriber
-func NewSubscriber(username string, password string, host string, port string, exchange string, handler CommandHandler) *Subscriber {
+func NewSubscriber(username string, password string, host string, port string, exchange string, exchangeType string, handler CommandHandler) *Subscriber {
 	return &Subscriber{
-		handler:     handler,
-		rmqExchange: exchange,
-		rmqHost:     host,
-		rmqPassword: password,
-		rmqPort:     port,
-		rmqUsername: username}
+		handler:         handler,
+		rmqExchange:     exchange,
+		rmqExchangeType: exchangeType,
+		rmqHost:         host,
+		rmqPassword:     password,
+		rmqPort:         port,
+		rmqUsername:     username}
 }
 
 // Connect connects publisher
@@ -52,13 +54,13 @@ func (publisher *Subscriber) Connect() error {
 	publisher.channel = ch
 
 	err = ch.ExchangeDeclare(
-		publisher.rmqExchange, // name
-		"fanout",              // type
-		true,                  // durable
-		false,                 // auto-deleted
-		false,                 // internal
-		false,                 // no-wait
-		nil,                   // arguments
+		publisher.rmqExchange,     // name
+		publisher.rmqExchangeType, // type
+		true,  // durable
+		false, // auto-deleted
+		false, // internal
+		false, // no-wait
+		nil,   // arguments
 	)
 	if err != nil {
 		log.Fatalf("[0] %s: %s", "Failed to declare an exchange", err)

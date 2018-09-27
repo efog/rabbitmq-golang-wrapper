@@ -9,23 +9,25 @@ import (
 
 // Publisher defines the publisher for RabbitMQ
 type Publisher struct {
-	rmqUsername string
-	rmqPassword string
-	rmqHost     string
-	rmqPort     string
-	rmqExchange string
-	connection  *amqp.Connection
-	channel     *amqp.Channel
+	rmqUsername     string
+	rmqPassword     string
+	rmqHost         string
+	rmqPort         string
+	rmqExchange     string
+	rmqExchangeType string
+	connection      *amqp.Connection
+	channel         *amqp.Channel
 }
 
 // NewPublisher constructs a RabbitMQ publisher
-func NewPublisher(username string, password string, host string, port string, exchange string) *Publisher {
+func NewPublisher(username string, password string, host string, port string, exchange string, exchangeType string) *Publisher {
 	return &Publisher{
-		rmqExchange: exchange,
-		rmqHost:     host,
-		rmqPassword: password,
-		rmqPort:     port,
-		rmqUsername: username,
+		rmqExchange:     exchange,
+		rmqExchangeType: exchangeType,
+		rmqHost:         host,
+		rmqPassword:     password,
+		rmqPort:         port,
+		rmqUsername:     username,
 	}
 }
 
@@ -47,13 +49,13 @@ func (publisher *Publisher) Connect() error {
 	publisher.channel = ch
 
 	err = ch.ExchangeDeclare(
-		publisher.rmqExchange, // name
-		"fanout",              // type
-		true,                  // durable
-		false,                 // auto-deleted
-		false,                 // internal
-		false,                 // no-wait
-		nil,                   // arguments
+		publisher.rmqExchange,     // name
+		publisher.rmqExchangeType, // type
+		true,  // durable
+		false, // auto-deleted
+		false, // internal
+		false, // no-wait
+		nil,   // arguments
 	)
 	if err != nil {
 		log.Fatalf("[0] %s: %s", "Failed to declare an exchange", err)
